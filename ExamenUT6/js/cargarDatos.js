@@ -21,33 +21,48 @@ function eliminarProductos(evento) {
 }
 
  function cargarCesta() {
-     let productos;
-     let mostrar = d.getElementById('productos');
      
      var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
-
-            let p = d.createElement("p");
             
-            if (Objet.values()<=0) {
-                p.textContent = "Cesta Vacia";
-            } else {
-               
-               let tablaCesta = crearTablaCesta(productos);
-               mostrar.appendChild(tablaCesta);
-            }
            let cesta = JSON.parse(xhttp.responseText);
-            
+            mostrarCesta(cesta);
            }
         };
         xhttp.open("GET", "cesta_json.php", true);
         xhttp.send();
  }
  
+ const mostrarCesta = (cesta) => {
+    /* let mostrar = d.getElementById('productos'); */
+
+    let $divCesta = d.getElementById('productos');
+    let $div = $divCesta.querySelector('table');
+    
+    /* remover la tabla que ya hay dentro de div productos */
+    if ($div) {
+        $div.remove();
+    }
+    /* remover el p que hay con el precio dentro de div productos */
+    let $p = $divCesta.querySelector('p')
+    if($p){
+        $p.remove();
+    }
+
+    if (Object.keys(cesta).length <= 0) {
+        $p = d.createElement('p');
+        $p.textContent = "Cesta Vacía";
+        $divCesta.insertAdjacentElement('beforeend',$p);
+        
+    } else {
+        let tablaCesta = crearTablaCesta(cesta);
+        $divCesta.insertAdjacentElement('beforeend',tablaCesta);
+    }
+
+ }
+
  function crearTablaCesta(productos) {
-     Object.entries(productos);
-     
     let tabla = d.createElement("table");
     let cabecera =  ["Código", "Descripción", "Precio", "Unidades", "Eliminar"];
     
@@ -56,10 +71,12 @@ function eliminarProductos(evento) {
     tabla.appendChild(filaCabecera);
     
     for (clave in productos) {
-        let filaProducto = crear_fila(productos[clave], 'td');
-        let codigo = productos[clave].cod;
+        let filaProducto = crear_fila(clave, 'td');
+        let codigo = clave.cod;
         let formulario = crearFormulario('Eliminar',codigo, 'eliminarProductos');
-        filaProducto.insertAdjacentHTML("afterend", formulario);
+        let tdForm = createElement("td");
+        tdForm.appendChild(formulario);
+        filaProducto.insertAdjacentHTML("afterend", tdForm);
         
         tabla.appendChild(filaProducto);
     }
