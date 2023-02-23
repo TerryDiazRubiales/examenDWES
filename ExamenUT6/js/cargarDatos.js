@@ -11,13 +11,15 @@ function eliminarProductos(evento) {
         xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
             // al darle al boton eliminar recoge los datos y los manda
-            cargarCesta();
+            return;
             
            }
         };
         xhttp.open("POST", "eliminar_json.php", true);
         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhttp.send(params);
+
+        cargarCesta();
 }
 
  function cargarCesta() {
